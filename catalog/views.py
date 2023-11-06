@@ -18,3 +18,4 @@ def index_contacts(request):
         message = request.POST.get('message')
         print(f'{email}: {message}')
     return render(request, 'catalog/index_contacts.html')
+
