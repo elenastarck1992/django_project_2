@@ -4,12 +4,12 @@ from django.db import models
 NULLABLE = {'blank': True, 'null': True}
 class Product(models.Model):
     product_name =models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField
     image = models.ImageField(upload_to='products_images/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    price = models.IntegerField()
-    date_of_creation = models.DateField()
-    date_of_change = models.DateField()
+    price = models.IntegerField
+    date_of_creation = models.DateField
+    date_of_change = models.DateField
 
     def __str__(self):
         return f'{self.product_name}  {self.price}'
@@ -20,5 +20,4 @@ class Product(models.Model):
 
 class Category(models.Model):
     category_name = models.CharField(max_length=100)
-    category_description = models.TextField()
-    created_at = models.TextField()
+    category_description = models.TextField
