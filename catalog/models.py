@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+
 class Product(models.Model):
     product_name = models.CharField(max_length=100, verbose_name='название товара')
     description = models.TextField(default='', verbose_name='описание товара', null=True, blank=True)
@@ -23,7 +24,14 @@ class Category(models.Model):
     category_name = models.CharField(max_length=100, verbose_name='категория товара')
     category_description = models.TextField(verbose_name='описание категории', null=True, blank=True)
 
-
     class Meta:
         verbose_name = 'категория товара'
         verbose_name_plural = 'категории товаров'
+
+
+class Contact(models.Model):
+    phone_number = models.IntegerField(null=True, blank=True, verbose_name='контактный телефон')
+    email = models.CharField(max_length=40, null=True, blank=True, verbose_name='электронный адрес')
+
+    class Meta:
+        verbose_name = 'Контакты'
