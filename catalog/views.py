@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from catalog.models import Product
+from catalog.models import Product, Contact
 
 
 def index_home(request):
@@ -17,8 +17,11 @@ def index_contacts(request):
     """
     Функция для обработки GET и POST запросов со страницы index_contacts.html
     """
+    contacts = Contact.objects.all()
+    print(contacts)
     if request.method == 'POST':
+        phone = request.POST.get('phone')
         email = request.POST.get('email')
         message = request.POST.get('message')
-        print(f'{email}: {message}')
-    return render(request, 'catalog/index_contacts.html')
+        print(f'{email} {phone}: {message}')
+    return render(request, 'catalog/index_contacts.html', {'contact': contacts})
