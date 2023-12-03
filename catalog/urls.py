@@ -3,7 +3,7 @@ from django.urls import path
 from catalog.apps import CatalogConfig
 from catalog.views import index_contacts, index, product
 
-app_name = CatalogConfig
+app_name = CatalogConfig.name
 
 urlpatterns = [
     path('', index, name='index'),
