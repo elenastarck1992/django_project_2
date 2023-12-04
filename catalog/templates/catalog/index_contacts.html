@@ -28,7 +28,7 @@
         </form>
         <div class="card" col-6>
             <div class="card-body">
-                {% for contact_info in contact %}
+                {% for contact_info in index_contacts %}
                     <div>{{ contact_info.email }}</div>
                     <div>{{ contact_info.phone_number }}</div>
                 {% endfor %}
