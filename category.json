@@ -1,0 +1,26 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 7,
+    "fields": {
+      "category_name": "Пылесосы",
+      "category_description": "моющие пылесосы и роботы-пылесосы"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 12,
+    "fields": {
+      "category_name": "Стайлеры",
+      "category_description": null
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 13,
+    "fields": {
+      "category_name": "Стиральные и сушильные машины",
+      "category_description": ""
+    }
+  }
+]
