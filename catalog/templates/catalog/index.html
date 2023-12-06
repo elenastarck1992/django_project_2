@@ -12,7 +12,7 @@
         <div class="col-3">
             <div class="card mb-4 box-shadow">
                 <img class="card-img-top"
-                     src="{% mediapath object.preview %}"
+                     src="{% mediapath object.image %}"
                      alt="Card image cap"
                      height="250">
                 <div class="card-header">
@@ -23,7 +23,7 @@
                     <ul class="list-unstyled mt-3 mb-4 text-center m-3">
                         <li>{{ object.description|slice:100 }}</li>
                     </ul>
-                    <a href="{% url 'catalog:products' object.pk %}" type="button" class="btn btn-lg btn-block btn-outline-primary">Подробнее о товаре</a>
+                    <a href="{% url 'catalog:product' object.pk %}" type="button" class="btn btn-lg btn-block btn-outline-primary">Подробнее о товаре</a>
                 </div>
             </div>
         </div>
