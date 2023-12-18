@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 
 from catalog.models import Product, Contact, Category
 
@@ -27,24 +28,36 @@ def index_contacts(request):
     return render(request, 'catalog/index_contacts.html', {'contact': contacts})
 
 
-def index(request):
-    """
-    Функция для обработки GET запросов со страницы отображения продуктов products.html
-    """
-    context = {
-        'object_list': Product.objects.all(),
-        'title': 'Магазин техники e-Shop'
-    }
-    return render(request, 'catalog/index.html', context
-                  )
+# def index(request):
+#     """
+#     Функция для обработки GET запросов со страницы отображения продуктов product_list.html
+#     """
+#     context = {
+#         'object_list': Product.objects.all(),
+#         'title': 'Магазин техники e-Shop'
+#     }
+#     return render(request, 'catalog/index.html', context
+#                   )
+
+class ProductListView(ListView):
+    model = Product
+    extra_context = {'title': 'Магазин техники e-Shop'}
 
 
-def product(request, pk):
-    """
-    Функция для обработки GET запросов со страницы отображения продуктов products.html
-    """
-    context = {
-        'object_list': Product.objects.get(pk=pk),
-        'title': 'Товары'
-    }
-    return render(request, 'catalog/products.html', context)
+# def product(request, pk):
+#     """
+#     Функция для обработки GET запросов со страницы отображения продуктов product_list.html
+#     """
+#     context = {
+#         'object_list': Product.objects.get(pk=pk),
+#         'title': 'Товары'
+#     }
+#     return render(request, 'catalog/product_list.html', context)
+
+class ProductDetailView(DetailView):
+    model = Product
+    extra_context = {'title': 'Товары'}
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
