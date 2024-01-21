@@ -6,6 +6,10 @@ from blog.models import Blog
 
 
 class BlogCreateView(CreateView):
+    """
+    Класс для обработки GET и POST запросов со страницы blog_form.html
+    для создания блоговой записи
+    """
     model = Blog
     fields = ('title', 'content', 'preview', 'is_published')
     success_url = reverse_lazy('blog:list')
@@ -20,6 +24,10 @@ class BlogCreateView(CreateView):
 
 
 class BlogUpdateView(UpdateView):
+    """
+    Класс для обработки GET и POST запросов со страницы blog_form.html
+    для редактирования отдельной блоговой записи
+    """
     model = Blog
     fields = ('title', 'slug', 'content', 'preview', 'create_date', 'is_published',)
 
@@ -38,6 +46,10 @@ class BlogUpdateView(UpdateView):
 
 
 class BlogListView(ListView):
+    """
+    Класс для обработки GET запросов со страницы blog_list.html
+    для отображения страницы со списком блоговых записей
+    """
     model = Blog
 
     def get_queryset(self, *args, **kwargs):
@@ -48,6 +60,10 @@ class BlogListView(ListView):
 
 
 class BlogDetailView(DetailView):
+    """
+    Класс для обработки GET запросов со страницы blog_detail.html
+    для отображения отдельной блоговой записи со счетчиком просмотров
+    """
     model = Blog
     success_url = reverse_lazy('blog:list')
 
@@ -60,5 +76,9 @@ class BlogDetailView(DetailView):
 
 
 class BlogDeleteView(DeleteView):
+    """
+    Класс для обработки GET и POST запросов со страницы blog_detail.html
+    для удаления отдельной блоговой записи
+    """
     model = Blog
     success_url = reverse_lazy('blog:list')
