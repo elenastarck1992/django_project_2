@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
-from catalog.models import Product, Contact, Category
+from catalog.forms import ProductForm, VersionForm
+from catalog.models import Product, Contact, Category, Version
 
 
 def index_contacts(request):
@@ -19,18 +20,66 @@ def index_contacts(request):
     return render(request, 'catalog/index_contacts.html', {'contact': contacts})
 
 
+class ProductCreateView(CreateView):
+    """
+    Класс для обработки GET и POST запросов со страницы product_form.html
+    для создания нового товара
+    """
+    # template_name = 'catalog/index.html'
+    model = Product
+    form_class = ProductForm
+    extra_context = {'title': 'Магазин техники e-Shop'}
+    success_url = reverse_lazy('catalog:index')
+
+
+class ProductUpdateView(UpdateView):
+    """
+    Класс для обработки GET и POST запросов со страницы product_form.html
+    для редактирования товара
+    """
+    model = Product
+    form_class = ProductForm
+    extra_context = {'title': 'Магазин техники e-Shop'}
+    success_url = reverse_lazy('catalog:index')
+
+
 class ProductListView(ListView):
+    """
+    Класс для обработки GET и POST запросов со страницы product_list.html
+    для отображения страницы со списком товаров
+    """
     template_name = 'catalog/index.html'
     model = Product
     extra_context = {'title': 'Магазин техники e-Shop'}
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
+
+
 class ProductDetailView(DetailView):
+    """
+    Класс для обработки GET и POST запросов со страницы product_detail.html
+    для отображения страницы отдельного товара
+    """
     model = Product
     extra_context = {'title': 'Товары'}
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset
+
+
+class VersionCreateView(CreateView):
+    """
+    Класс для обработки GET и POST запросов со страницы product_form.html
+    для создания нового товара
+    """
+    template_name = 'catalog/product_form.html'
+    model = Version
+    form_class = VersionForm
+    extra_context = {'title': 'Магазин техники e-Shop'}
+    success_url = reverse_lazy('catalog:index')
 
 # def index_home(request):
 #     """
