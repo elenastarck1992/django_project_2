@@ -51,7 +51,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('catalog:index')
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(ListView):
     """
     Класс для обработки GET и POST запросов со страницы product_list.html
     для отображения страницы со списком товаров
