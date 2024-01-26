@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.db import models
 
 
@@ -11,6 +12,8 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     date_of_creation = models.DateField(default=datetime.datetime.now())
     date_of_change = models.DateField(default=datetime.datetime.now())
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='продавец')
 
     def __str__(self):
         return f'{self.product_name}  {self.price}'

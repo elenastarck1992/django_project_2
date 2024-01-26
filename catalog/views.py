@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -20,7 +21,7 @@ def index_contacts(request):
     return render(request, 'catalog/index_contacts.html', {'contact': contacts})
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для создания нового товара
@@ -31,8 +32,15 @@ class ProductCreateView(CreateView):
     extra_context = {'title': 'Магазин техники e-Shop'}
     success_url = reverse_lazy('catalog:index')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
 
-class ProductUpdateView(UpdateView):
+        return super().form_valid(form)
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для редактирования товара
@@ -43,7 +51,7 @@ class ProductUpdateView(UpdateView):
     success_url = reverse_lazy('catalog:index')
 
 
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     """
     Класс для обработки GET и POST запросов со страницы product_list.html
     для отображения страницы со списком товаров
@@ -54,10 +62,11 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        # queryset = queryset.filter(owner=self.owner)
         return queryset
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     """
     Класс для обработки GET и POST запросов со страницы product_detail.html
     для отображения страницы отдельного товара
@@ -70,7 +79,7 @@ class ProductDetailView(DetailView):
         return queryset
 
 
-class VersionCreateView(CreateView):
+class VersionCreateView(LoginRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для создания нового товара
@@ -100,11 +109,13 @@ class VersionCreateView(CreateView):
 #     }
 #     return render(request, 'catalog/blog_list.html', context
 #                   )
+# def own_products(request, pk):
+#     product_item = Product.objects.get(pk=pk)
+#     context = {
+#         'object_list': Product.objects.filter(product_id=pk, owner=request.user)
+#     }
+#     return render(request, 'catalog/index.html', context)
 
-# class ProductCreateView(CreateView):
-#     model = Product
-#     fields = ('product_name', 'description', 'image', 'category', 'price', 'date_of_creation',)
-#     success_url = reverse_lazy('catalog:index')
 
 # def get_queryset(self):
 #     queryset = super().get_queryset()
