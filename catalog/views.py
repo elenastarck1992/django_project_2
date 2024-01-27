@@ -1,10 +1,12 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Contact, Category, Version
+from users.forms import ModeratorProductForm
 
 
 def index_contacts(request):
@@ -40,15 +42,22 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для редактирования товара
     """
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.change_published_status'
     extra_context = {'title': 'Магазин техники e-Shop'}
     success_url = reverse_lazy('catalog:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
 
 class ProductListView(ListView):
@@ -62,8 +71,27 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        # queryset = queryset.filter(owner=self.owner)
+        # queryset = super().get_queryset().filter(
+        #     category_id=self.kwargs.get('pk'),
+        #     )
+        if not self.request.user.is_staff and self.request.user.is_authenticated:
+            queryset = queryset.filter(owner=self.request.user)
         return queryset
+    #
+    def get_form_class(self):
+        if self.request.user == self.object.user:
+            return ProductForm
+        elif self.request.user.has_perm('catalog.set_published'):
+            return ModeratorProductForm
+        else:
+            raise Http404('Вы не имеете права на редактирование чужих товаров')
+
+    # def get_context_data(self, *args, **kwargs):
+    #     context_data = super().get_context_data(*args, **kwargs)
+    #     category_item = Category.objects.get(pk=self.kwargs.get('pk'))
+    #     context_data['category_pk'] = category_item.pk
+    #     context_data['title'] = f'Магазин техники e-Shop {category_item.category_name}'
+    #     return context_data
 
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
@@ -79,6 +107,11 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
         return queryset
 
 
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:index')
+
+
 class VersionCreateView(LoginRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
@@ -89,44 +122,3 @@ class VersionCreateView(LoginRequiredMixin, CreateView):
     form_class = VersionForm
     extra_context = {'title': 'Магазин техники e-Shop'}
     success_url = reverse_lazy('catalog:index')
-
-# def index_home(request):
-#     """
-#     Функция для обработки GET запросов со страницы index_home.html
-#     """
-#     latest_products = Product.objects.all().order_by('-id')
-#     print(latest_products[:5])
-#     return render(request, 'catalog/index_home.html'
-#                            '')
-
-# def index(request):
-#     """
-#     Функция для обработки GET запросов со страницы отображения продуктов product_list.html
-#     """
-#     context = {
-#         'object_list': Product.objects.all(),
-#         'title': 'Магазин техники e-Shop'
-#     }
-#     return render(request, 'catalog/blog_list.html', context
-#                   )
-# def own_products(request, pk):
-#     product_item = Product.objects.get(pk=pk)
-#     context = {
-#         'object_list': Product.objects.filter(product_id=pk, owner=request.user)
-#     }
-#     return render(request, 'catalog/index.html', context)
-
-
-# def get_queryset(self):
-#     queryset = super().get_queryset()
-#     queryset = queryset.filter()
-
-# def product(request, pk):
-#     """
-#     Функция для обработки GET запросов со страницы отображения продуктов product_list.html
-#     """
-#     context = {
-#         'object_list': Product.objects.get(pk=pk),
-#         'title': 'Товары'
-#     }
-#     return render(request, 'catalog/product_list.html', context)

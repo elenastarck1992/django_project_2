@@ -1,5 +1,6 @@
 import random
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
@@ -67,6 +68,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
+@login_required
 def generate_new_password(request):
     """
     Функция для восстановления пользователя на автоматически сгенерированный пароль

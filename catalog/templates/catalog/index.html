@@ -7,44 +7,50 @@
     </div>
 
     <div class="container">
-        <div class="row text-center">
+
+            <div class="row text-center">
             <div class="col-6 mb-5">
                 <a class="btn btn-primary" href="{% url 'catalog:create_product' %}">Добавить продукт</a>
             </div>
             <div class="col-6 mb-5">
                 <a class="btn btn-primary" href="{% url 'catalog:version_create' %}">Добавить версию продукта</a>
             </div>
-            {% for object in object_list %}
-                <div class="col-3">
-                    <div class="card mb-4 box-shadow">
-                        <img class="card-img-top"
-                             src="{% mediapath object.image %}"
-                             alt="Card image cap"
-                             height="250">
-                        <div class="card-header">
-                            <h2 class="my-0 font-weight-normal">{{ object.name }}</h2>
-                        </div>
-                        <div class="card-body">
-                            <h4 class="card-title pricing-card-title">{{ object.price }} руб.</h4>
-                            <ul class="list-unstyled mt-3 mb-4 text-center m-3">
-                                <li>{{ object.description|slice:100 }}</li>
-                            </ul>
-                            <div class="card-footer">
+
+        {% for object in object_list %}
+            <div class="col-3">
+                <div class="card mb-4 box-shadow">
+                    <img class="card-img-top"
+                         src="{% mediapath object.image %}"
+                         alt="Card image cap"
+                         height="250">
+                    <div class="card-header">
+                        <h2 class="my-0 font-weight-normal">{{ object.name }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title pricing-card-title">{{ object.price }} руб.</h4>
+                        <ul class="list-unstyled mt-3 mb-4 text-center m-3">
+                            <li>{{ object.description|slice:100 }}</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="btn-group ">
                                 <a href="{% url 'catalog:product' object.pk %}" type="button"
-                                   class="btn btn-lg btn-block btn-outline-primary">Подробнее</a>
+                                   class="btn btn-sm  btn-outline-primary">view</a>
                                 <a href="{% url 'catalog:edit_product' object.pk %}" type="button"
-                                   class="btn btn-link">Редактировать товар</a>
-                                <span class="text-muted">Продавец: {{ object.owner|default:'e-shop' }}</span>
-                                {% for version in object.version_set.all %}
-                                    {% if version.is_active %}
-                                        <a> активная версия {{ version.number }}</a>
-                                    {% endif %}
-                                {% endfor %}
+                                   class="btn btn-sm  btn-outline-primary">edit</a>
+                                <a href="{% url 'catalog:delete_product' object.pk %}" type="button"
+                                   class="btn btn-sm  btn-outline-danger">delete</a>
                             </div>
+                            <span class="text-muted">Продавец: {{ object.owner|default:'e-shop' }}</span>
+                            {% for version in object.version_set.all %}
+                                {% if version.is_active %}
+                                    <a> активная версия {{ version.number }}</a>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
+        {% endfor %}
         </div>
     </div>
 {% endblock %}

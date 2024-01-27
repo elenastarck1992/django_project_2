@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('product_name', models.CharField(max_length=100)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='products_images/', verbose_name='изображение')),
+                ('image', models.ImageField(blank=True, null=True, upload_to='blog_images/', verbose_name='изображение')),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalog.category')),
             ],
             options={

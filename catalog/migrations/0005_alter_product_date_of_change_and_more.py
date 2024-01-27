@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='product',
             name='image',
-            field=models.ImageField(upload_to='products_images/', verbose_name='изображение'),
+            field=models.ImageField(upload_to='blog_images/', verbose_name='изображение'),
         ),
         migrations.AlterField(
             model_name='product',

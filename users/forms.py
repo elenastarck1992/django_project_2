@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from catalog.forms import StyleFormMixin
+from catalog.forms import StyleFormMixin, ProductForm
+from catalog.models import Product
 from users.models import User
 from django import forms
 
@@ -20,3 +21,10 @@ class UserForm(StyleFormMixin, UserChangeForm):
         super().__init__(*args, **kwargs)
 
         self.fields['password'].widget = forms.HiddenInput()
+
+
+class ModeratorProductForm(ProductForm):
+
+    class Meta:
+        model = Product
+        fields = ('description', 'category', 'is_published')

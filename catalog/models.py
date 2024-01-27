@@ -12,8 +12,10 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     date_of_creation = models.DateField(default=datetime.datetime.now())
     date_of_change = models.DateField(default=datetime.datetime.now())
+    is_published = models.BooleanField(default=False, verbose_name='Опубликовано')
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='продавец')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                              verbose_name='продавец')
 
     def __str__(self):
         return f'{self.product_name}  {self.price}'
@@ -21,6 +23,11 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'товар'
         verbose_name_plural = 'товары'
+        permissions = [(
+            "change_published_status",
+            "Can cancel publication of a product"
+        )
+        ]
 
 
 class Category(models.Model):
