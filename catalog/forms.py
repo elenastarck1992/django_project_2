@@ -7,6 +7,7 @@ class StyleFormMixin:
     """
     Класс для стилизации форм
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -61,3 +62,8 @@ class VersionForm(StyleFormMixin, forms.ModelForm):
         model = Version
         fields = '__all__'
 
+
+class ModeratorProductForm(ProductForm):
+    class Meta:
+        model = Product
+        fields = ('description', 'category', 'is_published')

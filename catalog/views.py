@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ModeratorProductForm
 from catalog.models import Product, Contact, Category, Version
 from users.forms import ModeratorProductForm
 
@@ -55,18 +55,27 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     success_url = reverse_lazy('catalog:index')
 
     def get_object(self, queryset=None):
-        self.object = super().get_object(queryset)
-        if self.object.owner != self.request.user and not self.request.user.is_staff:
-            raise Http404
-        return self.object
+        self.object = super().get_object()
+        if self.request.user.groups.filter(name='moderator').exists():
+            return self.object
+        if self.object.owner != self.request.user:
+            raise Http404('Вы не являетесь владельцем данного товара')
 
     def get_form_class(self):
-        if self.request.user == self.object.user:
-            return ProductForm
+        if self.request.user.groups.filter(name='moderator').exists():
+            return ModeratorProductForm
         elif self.request.user.has_perm('catalog.set_published'):
             return ModeratorProductForm
         else:
-            raise Http404('Вы не имеете права на редактирование чужих товаров')
+            return ProductForm
+
+    # def get_form_class(self):
+    #     if self.request.user == self.object.user:
+    #         return ProductForm
+    #     elif self.request.user.has_perm('catalog.set_published'):
+    #         return ModeratorProductForm
+    #     else:
+    #         raise Http404('Вы не имеете права на редактирование чужих товаров')
 
 
 class ProductListView(ListView):
@@ -87,7 +96,6 @@ class ProductListView(ListView):
             queryset = queryset.filter(owner=self.request.user)
         return queryset
     #
-
 
     # def get_context_data(self, *args, **kwargs):
     #     context_data = super().get_context_data(*args, **kwargs)
