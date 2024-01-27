@@ -23,7 +23,7 @@ def index_contacts(request):
     return render(request, 'catalog/index_contacts.html', {'contact': contacts})
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для создания нового товара
@@ -32,6 +32,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     extra_context = {'title': 'Магазин техники e-Shop'}
+    permission_required = 'catalog.add_product'
     success_url = reverse_lazy('catalog:index')
 
     def form_valid(self, form):
