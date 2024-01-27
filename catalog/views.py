@@ -60,6 +60,14 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
             raise Http404
         return self.object
 
+    def get_form_class(self):
+        if self.request.user == self.object.user:
+            return ProductForm
+        elif self.request.user.has_perm('catalog.set_published'):
+            return ModeratorProductForm
+        else:
+            raise Http404('Вы не имеете права на редактирование чужих товаров')
+
 
 class ProductListView(ListView):
     """
@@ -79,13 +87,7 @@ class ProductListView(ListView):
             queryset = queryset.filter(owner=self.request.user)
         return queryset
     #
-    def get_form_class(self):
-        if self.request.user == self.object.user:
-            return ProductForm
-        elif self.request.user.has_perm('catalog.set_published'):
-            return ModeratorProductForm
-        else:
-            raise Http404('Вы не имеете права на редактирование чужих товаров')
+
 
     # def get_context_data(self, *args, **kwargs):
     #     context_data = super().get_context_data(*args, **kwargs)
