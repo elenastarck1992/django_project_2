@@ -53,6 +53,9 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('catalog:index')
 
     def get_form_class(self):
+        """
+        Функция для проверки прав пользователя на редактирования товара
+        """
         if self.request.user == self.object.owner:
             return ProductForm
         elif self.request.user.groups.filter(name='moderator'):
@@ -89,6 +92,10 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('catalog:index')
 
     def get_object(self, queryset=None, *args, **kwargs):
+        """
+        Функция получения объекта модели и проверка прав доступа
+        для удаления продукта
+        """
         object_data = super().get_object(*args, **kwargs)
         if self.request.user == object_data.owner:
             return object_data

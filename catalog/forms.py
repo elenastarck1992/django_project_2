@@ -64,6 +64,10 @@ class VersionForm(StyleFormMixin, forms.ModelForm):
 
 
 class ModeratorProductForm(ProductForm):
+    """
+    Класс создания формы для редактирования модератором
+    """
+
     class Meta:
         model = Product
         fields = ('description', 'category', 'is_published')
