@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from pytils.translit import slugify
@@ -6,13 +6,14 @@ from pytils.translit import slugify
 from blog.models import Blog
 
 
-class BlogCreateView(LoginRequiredMixin, CreateView):
+class BlogCreateView(PermissionRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы blog_form.html
     для создания блоговой записи
     """
     model = Blog
     fields = ('title', 'content', 'preview', 'is_published')
+    permission_required = 'blog.add_blog'
     success_url = reverse_lazy('blog:list')
 
     def form_valid(self, form):
@@ -24,13 +25,14 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class BlogUpdateView(LoginRequiredMixin, UpdateView):
+class BlogUpdateView(PermissionRequiredMixin, UpdateView):
     """
     Класс для обработки GET и POST запросов со страницы blog_form.html
     для редактирования отдельной блоговой записи
     """
     model = Blog
     fields = ('title', 'slug', 'content', 'preview', 'create_date', 'is_published',)
+    permission_required = 'blog.change_blog'
 
     # success_url = reverse_lazy('blog:list')
 
@@ -76,10 +78,11 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogDeleteView(LoginRequiredMixin, DeleteView):
+class BlogDeleteView(PermissionRequiredMixin, DeleteView):
     """
     Класс для обработки GET и POST запросов со страницы blog_detail.html
     для удаления отдельной блоговой записи
     """
     model = Blog
     success_url = reverse_lazy('blog:list')
+    permission_required = 'blog.delete_blog'

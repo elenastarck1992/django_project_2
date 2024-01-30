@@ -152,3 +152,10 @@ EMAIL_HOST_PASSWORD ='izhxxeutsfhmobst'
 EMAIL_USE_SSL = True
 
 LOGIN_URL = 'users/'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}

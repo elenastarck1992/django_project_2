@@ -59,6 +59,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     """
     model = User
     form_class = UserForm
+    permission_required = 'users.change_user'
     success_url = reverse_lazy('users:profile')
 
     def get_object(self, queryset=None):

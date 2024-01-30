@@ -23,7 +23,7 @@ def index_contacts(request):
     return render(request, 'catalog/index_contacts.html', {'contact': contacts})
 
 
-class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для создания нового товара
@@ -32,7 +32,6 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
     model = Product
     form_class = ProductForm
     extra_context = {'title': 'Магазин техники e-Shop'}
-    permission_required = 'catalog.add_product'
     success_url = reverse_lazy('catalog:index')
 
     def form_valid(self, form):
@@ -43,39 +42,23 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         return super().form_valid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """
     Класс для обработки GET и POST запросов со страницы product_form.html
     для редактирования товара
     """
     model = Product
     form_class = ProductForm
-    permission_required = 'catalog.change_published_status'
     extra_context = {'title': 'Магазин техники e-Shop'}
     success_url = reverse_lazy('catalog:index')
 
-    def get_object(self, queryset=None):
-        self.object = super().get_object()
-        if self.request.user.groups.filter(name='moderator').exists():
-            return self.object
-        if self.object.owner != self.request.user:
-            raise Http404('Вы не являетесь владельцем данного товара')
-
     def get_form_class(self):
-        if self.request.user.groups.filter(name='moderator').exists():
-            return ModeratorProductForm
-        elif self.request.user.has_perm('catalog.set_published'):
+        if self.request.user == self.object.owner:
+            return ProductForm
+        elif self.request.user.groups.filter(name='moderator'):
             return ModeratorProductForm
         else:
-            return ProductForm
-
-    # def get_form_class(self):
-    #     if self.request.user == self.object.user:
-    #         return ProductForm
-    #     elif self.request.user.has_perm('catalog.set_published'):
-    #         return ModeratorProductForm
-    #     else:
-    #         raise Http404('Вы не имеете права на редактирование чужих товаров')
+            raise Http404('Вы не являетесь владельцем данного товара')
 
 
 class ProductListView(ListView):
@@ -83,29 +66,12 @@ class ProductListView(ListView):
     Класс для обработки GET и POST запросов со страницы product_list.html
     для отображения страницы со списком товаров
     """
-    template_name = 'catalog/index.html'
+    # template_name = 'catalog/index.html'
     model = Product
     extra_context = {'title': 'Магазин техники e-Shop'}
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        # queryset = super().get_queryset().filter(
-        #     category_id=self.kwargs.get('pk'),
-        #     )
-        if not self.request.user.is_staff and self.request.user.is_authenticated:
-            queryset = queryset.filter(owner=self.request.user)
-        return queryset
-    #
 
-    # def get_context_data(self, *args, **kwargs):
-    #     context_data = super().get_context_data(*args, **kwargs)
-    #     category_item = Category.objects.get(pk=self.kwargs.get('pk'))
-    #     context_data['category_pk'] = category_item.pk
-    #     context_data['title'] = f'Магазин техники e-Shop {category_item.category_name}'
-    #     return context_data
-
-
-class ProductDetailView(LoginRequiredMixin, DetailView):
+class ProductDetailView(DetailView):
     """
     Класс для обработки GET и POST запросов со страницы product_detail.html
     для отображения страницы отдельного товара
@@ -122,6 +88,13 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
 
+    def get_object(self, queryset=None, *args, **kwargs):
+        object_data = super().get_object(*args, **kwargs)
+        if self.request.user == object_data.owner:
+            return object_data
+        else:
+            raise Http404('Вы не являетесь владельцем данного товара')
+
 
 class VersionCreateView(LoginRequiredMixin, CreateView):
     """
@@ -131,5 +104,6 @@ class VersionCreateView(LoginRequiredMixin, CreateView):
     template_name = 'catalog/product_form.html'
     model = Version
     form_class = VersionForm
+    permission_required = 'catalog.add_version'
     extra_context = {'title': 'Магазин техники e-Shop'}
     success_url = reverse_lazy('catalog:index')

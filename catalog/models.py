@@ -26,7 +26,15 @@ class Product(models.Model):
         permissions = [(
             "change_published_status",
             "Can cancel publication of a product"
-        )
+        ),
+            ("change_product_description",
+             "Can change product description"
+             ),
+            (
+                "change_category",
+                "Can change category"
+            )
+
         ]
 
 
