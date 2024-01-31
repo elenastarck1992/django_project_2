@@ -6,6 +6,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from catalog.forms import ProductForm, VersionForm, ModeratorProductForm
 from catalog.models import Product, Contact, Category, Version
+from services import get_categories_cache
 from users.forms import ModeratorProductForm
 
 
@@ -69,7 +70,7 @@ class ProductListView(ListView):
     Класс для обработки GET и POST запросов со страницы product_list.html
     для отображения страницы со списком товаров
     """
-    # template_name = 'catalog/index.html'
+
     model = Product
     extra_context = {'title': 'Магазин техники e-Shop'}
 
